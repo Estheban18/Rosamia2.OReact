@@ -1,0 +1,172 @@
+/* ComoComprar.css */
+.comocomprar-container {
+  font-family: 'Poppins', sans-serif;
+  color: #4a4a4a;
+}
+
+.comocomprar-hero {
+  background: linear-gradient(135deg, #ffd6e7 0%, #ffb6c1 100%);
+  padding: 100px 20px;
+  text-align: center;
+  color: #8a0c42;
+}
+
+.comocomprar-hero h1 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.comocomprar-hero p {
+  font-size: 1.2rem;
+}
+
+.pasos-section {
+  padding: 80px 20px;
+  background-color: #fff5f8;
+}
+
+.pasos-section h2 {
+  text-align: center;
+  color: #880e4f;
+  margin-bottom: 50px;
+  font-size: 2.2rem;
+}
+
+.pasos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.paso-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(175, 47, 47, 0.1);
+  transition: transform 0.3s;
+}
+
+.paso-card:hover {
+  transform: translateY(-10px);
+}
+
+.paso-numero {
+  width: 50px;
+  height: 50px;
+  background-color: #f8bbd0;
+  color: #880e4f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto 20px;
+}
+
+.paso-card h3 {
+  color: #c2185b;
+  margin-bottom: 15px;
+}
+
+.paso-card p {
+  line-height: 1.6;
+}
+
+.metodos-pago {
+  padding: 80px 20px;
+  background-color: white;
+  text-align: center;
+}
+
+.metodos-pago h2 {
+  color: #880e4f;
+  margin-bottom: 50px;
+  font-size: 2.2rem;
+}
+
+.pago-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.metodo-pago {
+  padding: 30px 20px;
+  background-color: #fff5f8;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(175, 47, 47, 0.1);
+}
+
+.pago-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.metodo-pago h3 {
+  color: #c2185b;
+}
+
+.envio-section {
+  padding: 80px 20px;
+  background-color: #fff5f8;
+}
+
+.envio-section h2 {
+  text-align: center;
+  color: #880e4f;
+  margin-bottom: 50px;
+  font-size: 2.2rem;
+}
+
+.envio-content {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.envio-info {
+  flex: 1;
+  min-width: 300px;
+  padding: 20px;
+}
+
+.envio-info h3 {
+  color: #c2185b;
+  margin: 25px 0 15px;
+}
+
+.envio-info h3:first-child {
+  margin-top: 0;
+}
+
+.envio-info p {
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.envio-image {
+  flex: 1;
+  min-width: 300px;
+  height: 400px;
+  background-color: #f8bbd0;
+  border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+  .envio-content {
+    flex-direction: column;
+  }
+  
+  .envio-image {
+    margin-top: 30px;
+  }
+} 
