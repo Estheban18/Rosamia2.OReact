@@ -1,5 +1,4 @@
-// Inicio.jsx
-import React, { useState } from 'react';
+
 import { FiMaximize, FiMinimize, FiX } from 'react-icons/fi';
 import './Inicio.css';
 
