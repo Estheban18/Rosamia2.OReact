@@ -1,7 +1,7 @@
 // ComoComprar.jsx
 import React, { useState } from 'react';
 import { FiMaximize, FiMinimize, FiX } from 'react-icons/fi';
-import '../ComoComprar.css';
+import './ComoComprar.css';
 
 const ComoComprar = () => {
   const [showEnvio, setShowEnvio] = useState(true);

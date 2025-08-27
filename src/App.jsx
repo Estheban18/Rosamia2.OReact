@@ -1,18 +1,16 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from '../Header/Header';
-import Navbar from '../../Navbar/Navbar';
-import Inicio from '../../pages/Inicio/Inicio';
-import Nosotros from '../pages/Nosotros/Nosotros';
-import ClientesSatisfechos from '../pages/ClientesSatisfechos/ClientesSatisfechos';
-import ComoComprar from '../pages/ComoComprar/ComoComprar';
-import '../index.css';
+import Header from './components/Header/Header';
+import Inicio from './Pages/Inicio/Inicio';
+import Nosotros from './Pages/Nosotros/Nosotros';
+import ClientesSatisfechos from './Pages/ClientesSatisfechos/ClientesSatisfechos';
+import ComoComprar from './Pages/ComoComprar/ComoComprar';
+import './App.css';
 
 function App() {
   return (
     <Router>
       <div className="app-container">
         <Header />
-        <Navbar />
         <main className="main-content">
           <Routes>
             {/* Ruta raíz que redirige a /inicio */}
