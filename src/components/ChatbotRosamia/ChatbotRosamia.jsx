@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './ChatbotRosamia.css'; // Importamos los estilos CSS
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import './ChatbotRosamia.css'; // Importamos los estilos CSS mejorados
 
 const ChatbotRosamia = () => {
   const [messages, setMessages] = useState([
@@ -11,57 +11,120 @@ const ChatbotRosamia = () => {
     }
   ]);
   const [inputValue, setInputValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  
+  // Estados mejorados para el control del chatbot
+  const [chatState, setChatState] = useState('closed'); // 'closed', 'minimized', 'open', 'opening'
+  const [isVisible, setIsVisible] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
+  
+  // Estados para el entrenamiento
   const [isTraining, setIsTraining] = useState(false);
   const [trainingData, setTrainingData] = useState({});
+  const [isTyping, setIsTyping] = useState(false);
+  
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
+  const inputRef = useRef(null);
 
   // Base de conocimiento inicial del chatbot
   const knowledgeBase = {
-    saludos: ["Hola", "Hola!", "¡Hola! ¿En qué puedo ayudarte?", "¡Hola! ¿Cómo estás?"],
-    despedidas: ["Adiós", "Hasta luego", "¡Que tengas un buen día!", "Fue un placer ayudarte"],
+    saludos: [
+      "¡Hola! ¿En qué puedo ayudarte?", 
+      "¡Hola! ¿Cómo estás?",
+      "¡Buenos días! ¿En qué puedo asistirte?",
+      "¡Hola! Es un placer saludarte"
+    ],
+    despedidas: [
+      "¡Hasta luego! Que tengas un excelente día",
+      "Adiós, fue un placer ayudarte",
+      "¡Nos vemos! Siempre estaré aquí cuando me necesites",
+      "¡Que tengas un buen día!"
+    ],
     ayuda: [
-      "Puedo ayudarte con preguntas generales. ¿En qué necesitas ayuda?",
-      "Estoy aquí para asistirte. ¿Qué necesitas saber?",
-      "Pregúntame lo que quieras y haré lo posible por ayudarte"
+      "Puedo ayudarte con preguntas generales, responder dudas o simplemente conversar contigo. ¿En qué necesitas ayuda?",
+      "Estoy aquí para asistirte en lo que necesites. ¿Qué te gustaría saber?",
+      "Pregúntame lo que quieras y haré lo posible por ayudarte. También puedes entrenarme para mejorar mis respuestas"
     ],
     default: [
-      "Interesante. ¿Podrías decirme más?",
-      "No estoy segura de entender completamente. ¿Podrías reformular?",
-      "Eso es algo sobre lo que todavía estoy aprendiendo",
+      "Interesante. ¿Podrías contarme más sobre eso?",
+      "No estoy completamente segura de entender. ¿Podrías reformular tu pregunta?",
+      "Eso es algo sobre lo que todavía estoy aprendiendo. ¿Podrías explicarme más?",
       "Voy a tomar nota de eso para mejorar mis respuestas en el futuro"
     ]
   };
 
-  const scrollToBottom = () => {
+  // Función para scroll automático
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (chatState === 'open') {
+      scrollToBottom();
+    }
+  }, [messages, chatState, scrollToBottom]);
+
+  // Enfocar input cuando se abre el chat
+  useEffect(() => {
+    if (chatState === 'open' && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 300);
+    }
+  }, [chatState]);
+
+  // Función mejorada para abrir el chatbot
+  const openChatbot = useCallback(() => {
+    setIsVisible(true);
+    setChatState('opening');
+    
+    // Cambiar a 'open' después de la animación
+    setTimeout(() => {
+      setChatState('open');
+    }, 300);
+  }, []);
+
+  // Función para cerrar el chatbot
+  const closeChatbot = useCallback(() => {
+    setChatState('closed');
+    
+    // Ocultar completamente después de la animación
+    setTimeout(() => {
+      setIsVisible(false);
+    }, 400);
+  }, []);
+
+  // Función para minimizar/maximizar
+  const toggleMinimize = useCallback(() => {
+    if (chatState === 'minimized') {
+      setChatState('open');
+    } else if (chatState === 'open') {
+      setChatState('minimized');
+    }
+  }, [chatState]);
 
   // Función para encontrar la respuesta más adecuada
-  const findBestResponse = (input) => {
+  const findBestResponse = useCallback((input) => {
     const inputLower = input.toLowerCase();
     
     // Detectar saludos
     if (inputLower.includes("hola") || inputLower.includes("buenos días") || 
-        inputLower.includes("buenas tardes") || inputLower.includes("hi") || 
-        inputLower.includes("hello")) {
+        inputLower.includes("buenas tardes") || inputLower.includes("buenas noches") ||
+        inputLower.includes("hi") || inputLower.includes("hello")) {
       return knowledgeBase.saludos[Math.floor(Math.random() * knowledgeBase.saludos.length)];
     }
     
     // Detectar despedidas
     if (inputLower.includes("adiós") || inputLower.includes("chao") || 
         inputLower.includes("nos vemos") || inputLower.includes("hasta luego") ||
-        inputLower.includes("bye")) {
+        inputLower.includes("bye") || inputLower.includes("hasta la vista")) {
       return knowledgeBase.despedidas[Math.floor(Math.random() * knowledgeBase.despedidas.length)];
     }
     
     // Detectar preguntas de ayuda
     if (inputLower.includes("ayuda") || inputLower.includes("qué puedes hacer") || 
-        inputLower.includes("para qué sirves") || inputLower.includes("help")) {
+        inputLower.includes("para qué sirves") || inputLower.includes("help") ||
+        inputLower.includes("cómo funcionas")) {
       return knowledgeBase.ayuda[Math.floor(Math.random() * knowledgeBase.ayuda.length)];
     }
     
@@ -74,112 +137,129 @@ const ChatbotRosamia = () => {
     
     // Respuesta por defecto
     return knowledgeBase.default[Math.floor(Math.random() * knowledgeBase.default.length)];
-  };
+  }, [trainingData, knowledgeBase]);
 
-  const handleSendMessage = () => {
-    if (inputValue.trim() === "") return;
+  // Función mejorada para enviar mensajes
+  const handleSendMessage = useCallback(() => {
+    if (inputValue.trim() === "" || isTyping) return;
     
     // Agregar mensaje del usuario
     const newUserMessage = {
-      id: messages.length + 1,
-      text: inputValue,
+      id: Date.now(),
+      text: inputValue.trim(),
       sender: "user",
       timestamp: new Date()
     };
     
-    setMessages([...messages, newUserMessage]);
+    setMessages(prev => [...prev, newUserMessage]);
+    const currentInput = inputValue;
     setInputValue("");
+    setIsTyping(true);
     
-    // Simular respuesta del bot después de un breve retraso
+    // Simular respuesta del bot con indicador de escritura
     setTimeout(() => {
-      const botResponse = findBestResponse(inputValue);
+      const botResponse = findBestResponse(currentInput);
       
       const newBotMessage = {
-        id: messages.length + 2,
+        id: Date.now() + 1,
         text: botResponse,
         sender: "bot",
         timestamp: new Date()
       };
       
-      setMessages(prevMessages => [...prevMessages, newBotMessage]);
-    }, 800);
-  };
+      setMessages(prev => [...prev, newBotMessage]);
+      setIsTyping(false);
+    }, Math.random() * 1000 + 500); // Respuesta más natural
+  }, [inputValue, isTyping, findBestResponse]);
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSendMessage();
+  const handleKeyPress = useCallback((e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (isTraining) {
+        handleTrainResponse();
+      } else {
+        handleSendMessage();
+      }
     }
-  };
+  }, [isTraining, handleSendMessage]);
 
-  const handleTraining = () => {
+  // Función mejorada para el entrenamiento
+  const handleTraining = useCallback(() => {
     if (isTraining) {
-      // Finalizar el modo entrenamiento
       setIsTraining(false);
+      setTrainingData({});
       setInputValue("");
-    } else {
-      // Iniciar el modo entrenamiento
-      setIsTraining(true);
-      const trainingMessage = {
-        id: messages.length + 1,
-        text: "Modo entrenamiento activado. Por favor, escribe una palabra clave o frase que quieras que aprenda:",
+      
+      const cancelMessage = {
+        id: Date.now(),
+        text: "Entrenamiento cancelado. ¡Sigamos conversando!",
         sender: "bot",
         timestamp: new Date()
       };
-      setMessages([...messages, trainingMessage]);
+      setMessages(prev => [...prev, cancelMessage]);
+    } else {
+      setIsTraining(true);
+      const trainingMessage = {
+        id: Date.now(),
+        text: "🎓 Modo entrenamiento activado. Escribe una palabra clave o frase que quieras que aprenda:",
+        sender: "bot",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, trainingMessage]);
     }
-  };
+  }, [isTraining]);
 
-  const handleTrainResponse = () => {
+  const handleTrainResponse = useCallback(() => {
     if (inputValue.trim() === "") return;
     
     if (!trainingData.keyword) {
       // Guardar la palabra clave
-      setTrainingData({
-        keyword: inputValue,
-        response: ""
-      });
+      const keyword = inputValue.trim();
+      setTrainingData({ keyword, response: "" });
       
       const keywordMessage = {
-        id: messages.length + 1,
-        text: `Palabra clave "${inputValue}" guardada. Ahora escribe la respuesta que debería dar cuando detecte esta palabra:`,
+        id: Date.now(),
+        text: `✅ Palabra clave "${keyword}" guardada. Ahora escribe la respuesta que debería dar cuando detecte esta palabra:`,
         sender: "bot",
         timestamp: new Date()
       };
       
-      setMessages([...messages, keywordMessage]);
+      setMessages(prev => [...prev, keywordMessage]);
       setInputValue("");
     } else {
       // Guardar la respuesta completa
-      const newTrainingData = {
-        ...trainingData,
-        response: inputValue
+      const response = inputValue.trim();
+      const newTrainingEntry = {
+        [trainingData.keyword]: response
       };
       
-      // Aquí normalmente enviaríamos estos datos a un backend para almacenamiento permanente
-      // Por ahora, solo lo guardamos en el estado local
-      setTrainingData(newTrainingData);
+      setTrainingData(prev => ({
+        ...prev,
+        ...newTrainingEntry,
+        response
+      }));
       
       const responseMessage = {
-        id: messages.length + 1,
-        text: `¡Perfecto! Ahora responderé "${inputValue}" cuando detecte la palabra "${trainingData.keyword}".`,
+        id: Date.now(),
+        text: `🎉 ¡Perfecto! Ahora responderé "${response}" cuando detecte la palabra "${trainingData.keyword}". ¡Gracias por enseñarme!`,
         sender: "bot",
         timestamp: new Date()
       };
       
-      setMessages([...messages, responseMessage]);
+      setMessages(prev => [...prev, responseMessage]);
       setInputValue("");
       
-      // Salir del modo entrenamiento después de 2 segundos
+      // Salir del modo entrenamiento después de un momento
       setTimeout(() => {
         setIsTraining(false);
         setTrainingData({});
       }, 2000);
     }
-  };
+  }, [inputValue, trainingData]);
 
-  // Componente para el icono de flor rosada
+  // Componente para el icono de flor rosada mejorado
   const FlowerIcon = () => (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="20" cy="20" r="18" fill="#FFB6C1" stroke="#FF69B4" strokeWidth="2"/>
       <circle cx="20" cy="20" r="10" fill="#FF69B4"/>
       <circle cx="14" cy="14" r="4" fill="#FFC0CB"/>
@@ -193,62 +273,158 @@ const ChatbotRosamia = () => {
     </svg>
   );
 
+  // Componente para el icono de chat
+  const ChatIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
+      <circle cx="8" cy="10" r="1.5" fill="white"/>
+      <circle cx="12" cy="10" r="1.5" fill="white"/>
+      <circle cx="16" cy="10" r="1.5" fill="white"/>
+    </svg>
+  );
+
   // Formatear la hora para mostrar en los mensajes
   const formatTime = (date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Determinar las clases CSS según el estado
+  const getContainerClasses = () => {
+    const classes = ['chatbot-container'];
+    
+    if (chatState === 'closed') classes.push('closed');
+    if (chatState === 'minimized') classes.push('minimized');
+    if (chatState === 'opening') classes.push('opening');
+    if (isTyping) classes.push('loading');
+    
+    return classes.join(' ');
+  };
+
   return (
-    <div className="chatbot-container">
-      <div className="chatbot-header" onClick={() => setIsOpen(!isOpen)}>
-        <div className="chatbot-title">
-          <FlowerIcon />
-          <h2>Rosamia</h2>
-          <span className="status-dot"></span>
-        </div>
-        <button className="minimize-btn">{isOpen ? '−' : '+'}</button>
-      </div>
-      
-      {isOpen && (
-        <>
-          <div className="chatbot-messages">
-            {messages.map((message) => (
-              <div key={message.id} className={`message ${message.sender}`}>
-                <div className="message-content">
-                  <p>{message.text}</p>
-                  <span className="timestamp">{formatTime(message.timestamp)}</span>
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-          
-          <div className="chatbot-input">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={isTraining ? "Escribe la respuesta..." : "Escribe tu mensaje..."}
-              disabled={isTraining && trainingData.keyword && !trainingData.response}
-            />
-            <button 
-              onClick={isTraining ? handleTrainResponse : handleSendMessage}
-              disabled={isTraining && trainingData.keyword && !trainingData.response}
-            >
-              {isTraining ? (trainingData.keyword ? "Enseñar" : "Aprender") : "Enviar"}
-            </button>
-          </div>
-          
-          <div className="chatbot-actions">
-            <button className="training-btn" onClick={handleTraining}>
-              {isTraining ? "Cancelar Entrenamiento" : "Entrenar a Rosamia"}
-            </button>
-          </div>
-        </>
+    <>
+      {/* Botón flotante para abrir el chat */}
+      {(!isVisible || chatState === 'closed') && (
+        <button 
+          className="chatbot-toggle" 
+          onClick={openChatbot}
+          aria-label="Abrir chat con Rosamia"
+        >
+          <ChatIcon />
+        </button>
       )}
-    </div>
+
+      {/* Contenedor principal del chatbot */}
+      {isVisible && (
+        <div 
+          ref={chatContainerRef}
+          className={getContainerClasses()}
+          role="dialog"
+          aria-labelledby="chatbot-title"
+          aria-hidden={chatState === 'closed'}
+        >
+          {/* Cabecera mejorada */}
+          <div className="chatbot-header">
+            <div className="chatbot-title">
+              <FlowerIcon />
+              <h2 id="chatbot-title">Rosamia</h2>
+              <span 
+                className={`status-dot ${isOnline ? '' : 'offline'}`}
+                title={isOnline ? 'En línea' : 'Fuera de línea'}
+              ></span>
+            </div>
+            <div className="chatbot-controls">
+              <button 
+                className="control-btn minimize-btn"
+                onClick={toggleMinimize}
+                aria-label={chatState === 'minimized' ? 'Maximizar chat' : 'Minimizar chat'}
+                title={chatState === 'minimized' ? 'Maximizar' : 'Minimizar'}
+              >
+                {chatState === 'minimized' ? '□' : '−'}
+              </button>
+              <button 
+                className="control-btn close-btn"
+                onClick={closeChatbot}
+                aria-label="Cerrar chat"
+                title="Cerrar"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          
+          {/* Área de mensajes */}
+          {chatState !== 'minimized' && (
+            <>
+              <div className="chatbot-messages" role="log" aria-live="polite">
+                {messages.map((message) => (
+                  <div key={message.id} className={`message ${message.sender}`}>
+                    <div className="message-content">
+                      <p>{message.text}</p>
+                      <span className="timestamp">{formatTime(message.timestamp)}</span>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Indicador de escritura */}
+                {isTyping && (
+                  <div className="message bot">
+                    <div className="message-content">
+                      <p>
+                        <span className="typing-indicator">
+                          Rosamia está escribiendo
+                          <span>.</span><span>.</span><span>.</span>
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                <div ref={messagesEndRef} />
+              </div>
+              
+              {/* Área de entrada mejorada */}
+              <div className="chatbot-input">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={
+                    isTraining 
+                      ? (trainingData.keyword ? "Escribe la respuesta..." : "Escribe una palabra clave...")
+                      : "Escribe tu mensaje..."
+                  }
+                  disabled={isTyping}
+                  maxLength={500}
+                  aria-label="Escribe tu mensaje"
+                />
+                <button 
+                  onClick={isTraining ? handleTrainResponse : handleSendMessage}
+                  disabled={isTyping || inputValue.trim() === ""}
+                  aria-label={isTraining ? "Enseñar respuesta" : "Enviar mensaje"}
+                >
+                  {isTraining ? (trainingData.keyword ? "Enseñar" : "Aprender") : "Enviar"}
+                </button>
+              </div>
+              
+              {/* Botones de acción */}
+              <div className="chatbot-actions">
+                <button 
+                  className="training-btn" 
+                  onClick={handleTraining}
+                  disabled={isTyping}
+                  aria-label={isTraining ? "Cancelar entrenamiento" : "Entrenar a Rosamia"}
+                >
+                  {isTraining ? "Cancelar Entrenamiento" : "🎓 Entrenar a Rosamia"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
-export default ChatbotRosamia;  
+export default ChatbotRosamia; 
