@@ -1,31 +1,46 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from './components/Header/Header';
-import Inicio from './Pages/Inicio/Inicio';
-import Nosotros from './Pages/Nosotros/Nosotros';
-import ClientesSatisfechos from './Pages/ClientesSatisfechos/ClientesSatisfechos';
-import ComoComprar from './Pages/ComoComprar/ComoComprar';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Header from "./components/Header/Header";
+
+// Pages
+import Inicio from "./Pages/inicio/Inicio";
+import Nosotros from "./Pages/Nosotros/Nosotros";
+import ClientesSatisfechos from "./Pages/ClientesSatisfechos/ClientesSatisfechos";
+import ComoComprar from "./Pages/ComoComprar/ComoComprar";
+import EnviosyEntrega from "./Pages/EnviosyEntrega/EnviosyEntrega";
+import MetodosdePago from "./Pages/MetodosdePago/MetodosdePago";
+import NuestroEquipo from "./Pages/NuestroEquipo/NuestroEquipo";
+import NuestrosLogros from "./Pages/NuestrosLogros/NuestrosLogros";
+import NuestrosTrabajos from "./Pages/NuestrosTrabajos/NuestrosTrabajos";
+import Productos from "./Pages/Productos/Productos";
+
+// Components
+import WhatsAppChat from "./components/WhatsAppChat/WhatsAppChat";
+import ChatbotRosamia from "./components/ChatbotRosamia/ChatbotRosamia";
 
 function App() {
   return (
     <Router>
-      <div className="app-container">
+      <div className="App">
+        {/* Header ya incluye el Navbar */}
         <Header />
-        <main className="main-content">
-          <Routes>
-            {/* Ruta raíz que redirige a /inicio */}
-            <Route path="/" element={<Navigate to="/inicio" replace />} />
-            <Route path="/inicio" element={<Inicio />} />
-            <Route path="/nosotros" element={<Nosotros />} />
-            <Route path="/clientes-satisfechos" element={<ClientesSatisfechos />} />
-            <Route path="/como-comprar" element={<ComoComprar />} />
-            {/* Opcional: Ruta para manejar páginas no encontradas */}
-            <Route path="*" element={<div>Página no encontrada</div>} />
-          </Routes>
-        </main>
-        <footer className="app-footer">
-          <p>&copy; 2025 Rosamia Huanuco. Todos los derechos reservados.</p>
-        </footer>
+        <Routes>
+          {/* Redirección al inicio por defecto */}
+          <Route path="/" element={<Navigate to="/inicio" />} />
+          <Route path="/inicio" element={<Inicio />} />
+          <Route path="/nosotros" element={<Nosotros />} />
+          <Route path="/clientes-satisfechos" element={<ClientesSatisfechos />} />
+          <Route path="/como-comprar" element={<ComoComprar />} />
+          <Route path="/envios-y-entrega" element={<EnviosyEntrega />} />
+          <Route path="/metodos-de-pago" element={<MetodosdePago />} />
+          <Route path="/nuestro-equipo" element={<NuestroEquipo />} />
+          <Route path="/nuestros-logros" element={<NuestrosLogros />} />
+          <Route path="/nuestros-trabajos" element={<NuestrosTrabajos />} />
+          <Route path="/productos" element={<Productos />} />
+        </Routes>
+        {/* Botones flotantes */}
+        <ChatbotRosamia /> 
+        <WhatsAppChat /> 
       </div>
     </Router>
   );
