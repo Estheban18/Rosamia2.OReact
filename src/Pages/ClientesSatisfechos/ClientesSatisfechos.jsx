@@ -1,4 +1,3 @@
-// ClientesSatisfechos.jsx
 import React, { useState } from 'react';
 import { FiMaximize, FiMinimize, FiX } from 'react-icons/fi';
 import './ClientesSatisfechos.css';
@@ -104,19 +103,8 @@ const ClientesSatisfechos = () => {
           </div>
         </section>
       )}
-
-      {/* Controles con íconos */}
-      <div className="clientes-controls">
-        <button onClick={() => setShowGaleria(!showGaleria)}>
-          {showGaleria ? <FiMinimize /> : <FiMaximize />}
-        </button>
-        <button onClick={() => setShowGaleria(false)}>
-          <FiX />
-        </button>
-      </div>
     </div>
   );
 };
 
-export default ClientesSatisfechos;
- 
+export default ClientesSatisfechos;  
