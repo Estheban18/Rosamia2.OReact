@@ -1,0 +1,79 @@
+.metodos-pago {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.metodos-pago h2 {
+  font-size: 2rem;
+  color: #333333;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.pago-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.metodo-pago {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metodo-pago:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.pago-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #4CAF50;
+}
+
+.metodo-pago h3 {
+  font-size: 1.2rem;
+  color: #555555;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .metodos-pago {
+    padding: 30px 15px;
+  }
+
+  .metodos-pago h2 {
+    font-size: 1.8rem;
+  }
+
+  .pago-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metodo-pago {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metodos-pago h2 {
+    font-size: 1.5rem;
+  }
+
+  .pago-icon {
+    font-size: 2rem;
+  }
+
+  .metodo-pago h3 {
+    font-size: 1rem;
+  }
+} 
