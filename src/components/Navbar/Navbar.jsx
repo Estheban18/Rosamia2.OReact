@@ -1,10 +1,12 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FiShoppingCart } from 'react-icons/fi';
+import { useCarrito } from '../Carrito/Carrito';
 import "./Navbar.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { cantidadTotal } = useCarrito();
 
   return (
     <nav className="flower-navbar">
@@ -27,6 +29,9 @@ const Navbar = () => {
           <Link to="/como-comprar" className="nav-link" onClick={() => setIsOpen(false)}>
             CÓMO COMPRAR
           </Link>
+          <Link to="/productos" className="nav-link" onClick={() => setIsOpen(false)}>
+            PRODUCTOS
+          </Link>
           <Link to="/envios-y-entrega" className="nav-link" onClick={() => setIsOpen(false)}>
             ENVÍOS Y ENTREGA
           </Link>
@@ -42,8 +47,17 @@ const Navbar = () => {
           <Link to="/nuestros-trabajos" className="nav-link" onClick={() => setIsOpen(false)}>
             PRODUCTOS EN VIDEOS
           </Link>
-          <Link to="/productos" className="nav-link" onClick={() => setIsOpen(false)}>
-            PRODUCTOS
+          <Link to="/carrito" className="nav-link carrito-link" onClick={() => setIsOpen(false)}>
+            <FiShoppingCart className="carrito-icon" />
+            CARRITO
+          </Link>
+        </div>
+        
+        {/* Botones de acción rápida */}
+        <div className="nav-actions">
+          <Link to="/carrito" className="action-btn carrito-btn" title="Ir al Carrito">
+            <FiShoppingCart />
+            <span className="cart-badge">{cantidadTotal}</span>
           </Link>
         </div>
       </div>
@@ -51,4 +65,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar; 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { FiHeart, FiEye, FiX, FiShoppingCart, FiStar } from 'react-icons/fi';
 import './Productos.css';
+import { useCarrito } from '../../components/Carrito/Carrito'; 
 
 const Productos = () => {
+  const { agregarAlCarrito, carrito, eliminarDelCarrito } = useCarrito();
+  
   const [products] = useState([
     { 
       id: 1, 
@@ -62,12 +65,11 @@ const Productos = () => {
     },
   ]);
 
-  const [acceptedCart, setAcceptedCart] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [favorites, setFavorites] = useState([]);
 
   const handleAddToCart = (product) => {
-    setAcceptedCart([...acceptedCart, {...product, dateAdded: new Date()}]);
+    agregarAlCarrito(product);
   };
 
   const toggleFavorite = (productId) => {
@@ -86,8 +88,13 @@ const Productos = () => {
     setSelectedProduct(null);
   };
 
-  const removeFromAcceptedCart = (index) => {
-    setAcceptedCart(acceptedCart.filter((_, i) => i !== index));
+  const removeFromCart = (productId) => {
+    eliminarDelCarrito(productId);
+  };
+
+  // Función para verificar si un producto está en el carrito
+  const isInCart = (productId) => {
+    return carrito.some(item => item.id === productId);
   };
 
   // Función para renderizar estrellas de calificación
@@ -147,10 +154,11 @@ const Productos = () => {
               </div>
               <p className="precio">S/ {product.price.toFixed(2)}</p>
               <button 
-                className="comprar-btn" 
+                className={`comprar-btn ${isInCart(product.id) ? 'in-cart' : ''}`}
                 onClick={() => handleAddToCart(product)}
               >
-                <FiShoppingCart /> Añadir al Carrito
+                <FiShoppingCart /> 
+                {isInCart(product.id) ? 'En Carrito' : 'Añadir al Carrito'}
               </button>
             </div>
           </div>
@@ -180,13 +188,14 @@ const Productos = () => {
                   Hecho con los mejores ingredientes y mucho amor.
                 </p>
                 <button 
-                  className="modal-comprar-btn"
+                  className={`modal-comprar-btn ${isInCart(selectedProduct.id) ? 'in-cart' : ''}`}
                   onClick={() => {
                     handleAddToCart(selectedProduct);
                     closeModal();
                   }}
                 >
-                  <FiShoppingCart /> Añadir al Carrito
+                  <FiShoppingCart /> 
+                  {isInCart(selectedProduct.id) ? 'En Carrito' : 'Añadir al Carrito'}
                 </button>
               </div>
             </div>
@@ -194,13 +203,13 @@ const Productos = () => {
         </div>
       )}
 
-      {/* Sección de Carritos Aceptados */}
-      {acceptedCart.length > 0 && (
+      {/* Sección de Productos en el Carrito */}
+      {carrito.length > 0 && (
         <div className="accepted-cart-section">
-          <h2>Productos en tu Carrito ({acceptedCart.length})</h2>
+          <h2>Productos en tu Carrito ({carrito.length})</h2>
           <div className="productos-grid accepted-grid">
-            {acceptedCart.map((item, index) => (
-              <div key={index} className="producto-card accepted">
+            {carrito.map((item) => (
+              <div key={item.id} className="producto-card accepted">
                 <div className="producto-image">
                   <img src={item.image} alt={item.name} />
                   <span className="accepted-badge">En Carrito</span>
@@ -213,15 +222,13 @@ const Productos = () => {
                   </div>
                   <p className="precio">S/ {item.price.toFixed(2)}</p>
                   <div className="accepted-actions">
-                    <button className="accepted-btn">
-                      <FiShoppingCart /> En Carrito
-                    </button>
+                    <span className="quantity">Cantidad: {item.cantidad || 1}</span>
                     <button 
                       className="remove-btn"
-                      onClick={() => removeFromAcceptedCart(index)}
+                      onClick={() => removeFromCart(item.id)}
                       aria-label="Eliminar del carrito"
                     >
-                      <FiX />
+                      <FiX /> Eliminar
                     </button>
                   </div>
                 </div>
